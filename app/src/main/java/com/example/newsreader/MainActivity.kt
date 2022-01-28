@@ -2,6 +2,7 @@ package com.example.newsreader
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.newsreader.newsfeed.NewsFeedViewModel
 import com.kwabenaberko.newsapilib.models.Article
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -24,25 +26,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = "hello") {
-                composable("hello") { HelloCompose() }
-            }
+            Text(text = "test")
+//            val navController = rememberNavController()
+//            NavHost(navController = navController, startDestination = "hello") {
+//                composable("hello") { HelloCompose() }
+//            }
         }
     }
 
     @Composable
     fun HelloCompose(){
-        val newsFeed = newsFeedViewModel
-            .newsFeed
-            .collectAsState(initial = listOf())
-
-        Column {
-            newsFeed.value.forEach { article ->
-                Text(text = article.title)
-                Text(text = article.description)
-            }
-        }
+//        val newsFeed = newsFeedViewModel
+//            .newsFeed
+//            .collectAsState(initial = listOf())
+//
+//        Column {
+//            newsFeed.value.forEach { article ->
+//                Text(text = article.title)
+//                Text(text = article.description)
+//            }
+//        }
     }
 
 }
