@@ -1,0 +1,55 @@
+# Sleep Cycle Android coding challenge
+
+## Introduction
+
+For this challenge, you will implement a basic news reader app. It should list news from [NewsAPI.org](https://newsapi.org) with an image thumbnail (where available), without using NewsAPI's finished Java library. In order to increase the need for good parallelization, the list should be populated from three *separate and parallel* API calls for different subjects. You may use any subjects you want, but a suggestion would be "Apple", "Google" and "Facebook".
+
+Tapping a news listing should open the article in a detail view for further reading (NewsAPI cuts off the full article text, you *do not* need to get around this). The news list should refresh automatically when the user returns to the app after closing it or using other apps.
+
+If the user opens the app without an Internet connection, the last available news should be displayed, including images.
+
+For your convenience, we have supplied a basic app skeleton. You are not required to use this, if you prefer another way of setting up a new app.
+
+As we want to respect your time, you should spend no more than four hours completing the assignment. If you run out of time, please include a document detailing what parts remain, and a brief description of how you would solve those parts given more time.
+
+## Requirements
+
+* News list for three topics from News API
+
+ * Parallell download
+
+ * Headline
+
+ * Description
+
+ * Thumbnail
+
+ * Automatic refresh
+
+* Detail view
+
+ * Larger image
+
+ * More text
+
+* Offline support
+
+## Submission
+
+Please send your work, in a Git repository, to your contact at Sleep Cycle.
+
+## Evaluation
+
+We will evaluate your solution on the following criteria:
+
+* Architecture
+
+* Thread handling
+
+* Readability
+
+* UX
+
+Good luck, please reach out if you have any questions.
+
+*Sleep Cycle Team*
