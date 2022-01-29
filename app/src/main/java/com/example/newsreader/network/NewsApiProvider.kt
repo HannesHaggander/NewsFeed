@@ -1,7 +1,7 @@
 package com.example.newsreader.network
 
 import com.kwabenaberko.newsapilib.NewsApiClient
-import com.kwabenaberko.newsapilib.models.request.TopHeadlinesRequest
+import com.kwabenaberko.newsapilib.models.request.EverythingRequest
 import com.kwabenaberko.newsapilib.models.response.ArticleResponse
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -11,16 +11,17 @@ class NewsApiProvider @Inject constructor(
     private val newsApiClient: NewsApiClient
 ) : NewsApiContract {
 
-    suspend fun getCategory(category: String) =
-        suspendCoroutine<Result<ArticleResponse>> { suspended ->
+    override suspend fun getCategory(category: String): Result<ArticleResponse> =
+        suspendCoroutine { suspended ->
             if (category.isBlank()) {
-                throw IllegalArgumentException("Category can not be blank")
+                suspended.resume(Result.failure(Throwable("Category can not be blank")))
+                return@suspendCoroutine
             }
 
-            val request = TopHeadlinesRequest
-                .Builder()
-                .category(category)
-                .build()
+//            val request = TopHeadlinesRequest
+//                .Builder()
+//                .category(category)
+//                .build()
 
             val callback = object : NewsApiClient.ArticlesResponseCallback {
                 override fun onSuccess(response: ArticleResponse?) {
@@ -35,7 +36,10 @@ class NewsApiProvider @Inject constructor(
                 }
             }
 
-            newsApiClient.getTopHeadlines(request, callback)
+            //newsApiClient.getTopHeadlines(request, callback)
+
+            val request = EverythingRequest.Builder().q(category).build()
+            newsApiClient.getEverything(request, callback)
         }
 
     companion object {

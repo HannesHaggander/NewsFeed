@@ -1,5 +1,7 @@
 package com.example.newsreader.network
 
-interface NewsApiContract {
+import com.kwabenaberko.newsapilib.models.response.ArticleResponse
 
+interface NewsApiContract {
+    suspend fun getCategory(category: String): Result<ArticleResponse>
 }
