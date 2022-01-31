@@ -8,7 +8,7 @@ class NewsFeedUseCase @Inject constructor(
     private val newsApiContract: NewsApiContract
 ) {
     suspend fun getTopic(topic: String): List<ArticleItemData> = newsApiContract
-        .getCategory(topic)
+        .queryRequest(topic)
         .getOrNull()
         .orEmpty()
 }

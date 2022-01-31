@@ -3,11 +3,11 @@ package com.example.newsreader.network.requests
 import com.example.newsreader.network.data.EverythingQueryResult
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface NewsQuery {
 
-    @GET("everything/q={query}")
-    fun query(@Path("query") q: String): Call<EverythingQueryResult>
+    @GET("everything")
+    fun query(@Query("q") q: String): Call<EverythingQueryResult>
 
 }

@@ -39,6 +39,7 @@ fun Loading(
             progress = lottieProgress,
             modifier = Modifier
                 .fillMaxWidth(0.5f)
+                .fillMaxHeight(0.25f)
                 .padding(8.dp)
         )
 
