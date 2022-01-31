@@ -2,13 +2,12 @@ package com.example.newsreader.newsfeed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsreader.R
-import com.example.newsreader.helpers.safeEmit
 import com.example.newsreader.newsfeed.data.ArticleItemData
-import com.example.newsreader.ui.states.NewsFeedViewState
+import com.example.newsreader.ui.newsfeed.states.NewsFeedViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -16,35 +15,35 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class NewsFeedViewModel @Inject constructor(
     private val newsFeedUseCase: NewsFeedUseCase
 ) : ViewModel() {
 
     val currentState = flow {
-        getPopularCategories().let { articles ->
+        emit(NewsFeedViewState.Loading())
+        getTopics().let { articles ->
             if (articles.isEmpty()) {
-                safeEmit(NewsFeedViewState.Error(Throwable("Failed to find any articles")))
+                emit(NewsFeedViewState.Error(Throwable("Failed to find any articles")))
             } else {
-                safeEmit(NewsFeedViewState.Success(articles))
+                emit(NewsFeedViewState.Success(articles))
             }
         }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        NewsFeedViewState.Loading(R.string.news_feed_loading_message)
-    )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, NewsFeedViewState.Loading())
 
-    private suspend fun getPopularCategories(): List<ArticleItemData> = suspendCoroutine { s ->
+    private suspend fun getTopics() = suspendCoroutine<List<ArticleItemData>> { suspend ->
         viewModelScope.launch(Dispatchers.IO) {
             RECOMMENDED_TOPICS
-                .map { topic -> async { newsFeedUseCase.getTopic(topic) } } // retrieve in parallel
+                .map { async { newsFeedUseCase.getTopic(it) } } // fetch in parallel
                 .awaitAll()
                 .flatten()
-                .let { result ->
-                    withContext(Dispatchers.Main) {
-                        s.resume(result)
-                    }
-                }
+                .let { articles -> suspend.resume(articles) }
+        }
+    }
+
+    fun updateViewState() {
+        viewModelScope.launch {
+            currentState.collectLatest { /* Collect data */ }
         }
     }
 

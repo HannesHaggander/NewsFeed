@@ -1,4 +1,4 @@
-package com.example.newsreader.ui.newsfeed
+package com.example.newsreader.ui.newsfeed.states
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource

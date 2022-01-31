@@ -1,7 +1,7 @@
 package com.example.newsreader.network
 
-import com.kwabenaberko.newsapilib.models.response.ArticleResponse
+import com.example.newsreader.newsfeed.data.ArticleItemData
 
 interface NewsApiContract {
-    suspend fun getCategory(category: String): Result<ArticleResponse>
+    suspend fun getCategory(category: String): Result<List<ArticleItemData>>
 }

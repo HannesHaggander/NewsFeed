@@ -1,7 +1,10 @@
 package com.example.newsreader.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,20 +23,37 @@ fun ErrorView(
     action: (() -> Unit)?,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .background(MaterialTheme.colors.surface),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = title)
-        Text(text = description)
+        Text(
+            text = title,
+            style = AppStyle.title,
+            color = MaterialTheme.colors.error,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        Text(text = description, style = AppStyle.body, color = MaterialTheme.colors.onSurface)
         action?.let { click ->
             Button(
                 onClick = click,
                 modifier = modifier
                     .padding(8.dp)
                     .wrapContentWidth()
-                    .wrapContentHeight()
+                    .wrapContentHeight(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    contentColor = MaterialTheme.colors.onSecondary,
+                    disabledBackgroundColor = MaterialTheme.colors.background,
+                    disabledContentColor = MaterialTheme.colors.onBackground
+                )
             ) {
-                Text(text = actionText)
+                Text(
+                    text = actionText,
+                    style = AppStyle.utility,
+                    color = MaterialTheme.colors.onSurface
+                )
             }
         }
     }
@@ -42,10 +62,12 @@ fun ErrorView(
 @Preview
 @Composable
 fun ErrorViewPreview() {
-    ErrorView(
-        title = "Error occurred",
-        description = "This is a preview error",
-        actionText = "Reload",
-        action = {}
-    )
+    AppTheme {
+        ErrorView(
+            title = "Error occurred",
+            description = "This is a preview error",
+            actionText = "Reload",
+            action = {}
+        )
+    }
 }

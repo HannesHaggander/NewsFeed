@@ -1,5 +1,6 @@
 package com.example.newsreader.newsfeed.data
 
+import java.time.OffsetDateTime
 import java.util.*
 
 data class ArticleItemData(
@@ -7,7 +8,7 @@ data class ArticleItemData(
     val url: String = "",
     val title: String = "",
     val description: String = "",
-    val publishedAt: String = "",
+    val publishedAt: OffsetDateTime?,
     val urlToImage: String,
 ) {
     companion object {
@@ -15,7 +16,7 @@ data class ArticleItemData(
             url = "",
             title = "",
             description = "",
-            publishedAt = "",
+            publishedAt = OffsetDateTime.now(),
             urlToImage = ""
         )
     }
