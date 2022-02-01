@@ -6,4 +6,7 @@
     <string name="news_feed_loading_error_action">Retry</string>
 
     <string name="content_description_image">Image of %s</string>
+    <string name="article_published_at_date">Published: %s</string>
+    <string name="navigation_back">Go back button</string>
+
 </resources>

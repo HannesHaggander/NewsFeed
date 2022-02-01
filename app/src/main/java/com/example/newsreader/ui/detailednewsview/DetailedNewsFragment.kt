@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.newsreader.newsfeed.data.ArticleItemData
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,9 +24,8 @@ class DetailedNewsFragment : Fragment() {
 
         setContent {
             DetailedNewsView(
-                navController = findNavController(),
-                articleItemData = article
-            )
+                articleItemData = article,
+                onBackPress = { findNavController().popBackStack() })
         }
     }
 }

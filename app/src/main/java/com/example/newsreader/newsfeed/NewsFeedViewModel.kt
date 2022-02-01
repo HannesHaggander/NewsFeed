@@ -1,6 +1,5 @@
 package com.example.newsreader.newsfeed
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsreader.newsfeed.data.ArticleItemData
@@ -22,7 +21,6 @@ class NewsFeedViewModel @Inject constructor(
 ) : ViewModel() {
 
     val currentViewState = flow {
-        Log.d("hannes", "Updating current view state")
         emit(NewsFeedViewState.Loading())
         getTopics().let { articles ->
             if (articles.isEmpty()) {

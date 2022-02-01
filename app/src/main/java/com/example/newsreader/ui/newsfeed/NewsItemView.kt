@@ -1,5 +1,6 @@
 package com.example.newsreader.ui.newsfeed
 
+import android.text.Html
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,18 +31,19 @@ import java.util.*
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NewsItemView(
-    modifier: Modifier = Modifier
-        .wrapContentHeight()
-        .heightIn(0.dp, 150.dp)
-        .fillMaxWidth()
-        .padding(4.dp),
+    modifier: Modifier = Modifier,
     articleItemData: ArticleItemData,
     onItemClick: () -> Unit = {}
 ) {
     val hasImage = articleItemData.urlToImage.isNotEmpty()
 
     Card(
-        modifier = modifier.background(MaterialTheme.colors.surface),
+        modifier = modifier
+            .wrapContentHeight()
+            .heightIn(0.dp, 150.dp)
+            .fillMaxWidth()
+            .padding(4.dp)
+            .background(MaterialTheme.colors.surface),
         onClick = onItemClick,
         elevation = 4.dp,
     ) {
@@ -53,7 +55,8 @@ fun NewsItemView(
             val (textContainer, image) = createRefs()
 
             Column(modifier = modifier
-                .padding(start = 8.dp, end = 4.dp)
+                .padding(8.dp)
+                .heightIn(0.dp, 150.dp)
                 .constrainAs(textContainer) {
                     start.linkTo(parent.start)
                     top.linkTo(parent.top)
@@ -69,7 +72,9 @@ fun NewsItemView(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = articleItemData.description,
+                    text = Html
+                        .fromHtml(articleItemData.description, Html.FROM_HTML_MODE_LEGACY)
+                        .toString(),
                     style = AppStyle.body,
                     color = MaterialTheme.colors.onSurface,
                     maxLines = 3,
