@@ -50,7 +50,7 @@ class NewsFeedFragment : Fragment() {
 
         AppTheme {
             when (val state = newsFeed.value) {
-                is NewsFeedViewState.Error -> NewsFeedError { }
+                is NewsFeedViewState.Error -> NewsFeedError { newsFeedViewModel.updateCurrentViewState() }
                 is NewsFeedViewState.Loading -> Loading(loadingText = stringResource(id = R.string.news_feed_loading_message))
                 is NewsFeedViewState.Success -> PresentArticles(
                     articles = state.result,

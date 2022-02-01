@@ -13,15 +13,4 @@ data class ArticleItemData(
     val description: String,
     val publishedAt: OffsetDateTime?,
     val urlToImage: String,
-) : Parcelable {
-    companion object {
-        fun empty(): ArticleItemData = ArticleItemData(
-            id = UUID.randomUUID(),
-            url = "",
-            title = "",
-            description = "",
-            publishedAt = OffsetDateTime.now(),
-            urlToImage = ""
-        )
-    }
-}
+) : Parcelable

@@ -202,6 +202,5 @@ fun NewsItemList() {
                 )
             )
         }
-
     }
 }

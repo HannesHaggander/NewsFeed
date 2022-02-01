@@ -78,5 +78,4 @@ class NewsApiProvider @Inject constructor(
     companion object {
         private val TAG = NewsApiProvider::class.java.simpleName
     }
-
 }
