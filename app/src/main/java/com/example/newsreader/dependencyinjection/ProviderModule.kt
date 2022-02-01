@@ -30,8 +30,10 @@ class ProviderModule {
     ): NewsApiContract = NewsApiProvider(retrofit, localRoomDatabase)
 
     @Provides
-    fun provideNewsFeedUseCase(newsApiProvider: NewsApiProvider): NewsFeedUseCase =
-        NewsFeedUseCase(newsApiProvider)
+    fun provideNewsFeedUseCase(
+        newsApiProvider: NewsApiProvider,
+        localRoomDatabase: LocalRoomDatabase
+    ): NewsFeedUseCase = NewsFeedUseCase(newsApiProvider, localRoomDatabase)
 
     @Provides
     @Singleton
@@ -73,7 +75,7 @@ class ProviderModule {
 
     @Provides
     @Singleton
-    fun provideLocalRoomDatabase(@ApplicationContext appContext: Context) =
+    fun provideLocalRoomDatabase(@ApplicationContext appContext: Context): LocalRoomDatabase =
         LocalRoomDatabase.create(appContext)
 
 }

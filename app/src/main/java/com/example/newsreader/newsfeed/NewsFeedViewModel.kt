@@ -2,6 +2,9 @@ package com.example.newsreader.newsfeed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsreader.helpers.onEmpty
+import com.example.newsreader.helpers.onPopulated
+import com.example.newsreader.helpers.safeEmit
 import com.example.newsreader.newsfeed.data.ArticleItemData
 import com.example.newsreader.ui.newsfeed.states.NewsFeedViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,25 +24,39 @@ class NewsFeedViewModel @Inject constructor(
 ) : ViewModel() {
 
     val currentViewState = flow {
-        emit(NewsFeedViewState.Loading())
-        getTopics().let { articles ->
-            if (articles.isEmpty()) {
-                emit(NewsFeedViewState.Error(Throwable("Failed to find any articles")))
-            } else {
-                emit(NewsFeedViewState.Success(articles))
+        safeEmit(NewsFeedViewState.Loading())
+        getRecommendedTopicsFromNetwork()
+            .onEmpty {
+                attemptToFetchStoredArticles()
+                    .onEmpty { safeEmit(NewsFeedViewState.Error(Throwable("Failed to find articles"))) }
+                    .onPopulated { values -> safeEmit(NewsFeedViewState.Success(values)) }
             }
-        }
+            .onPopulated { values -> safeEmit(NewsFeedViewState.Success(values)) }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, NewsFeedViewState.Loading())
 
-    private suspend fun getTopics() = suspendCoroutine<List<ArticleItemData>> { suspend ->
-        viewModelScope.launch(Dispatchers.IO) {
-            RECOMMENDED_TOPICS
-                .map { async { newsFeedUseCase.getTopic(it) } } // fetch in parallel
-                .awaitAll()
-                .flatten()
-                .let { articles -> suspend.resume(articles) }
+    private suspend fun attemptToFetchStoredArticles(): List<ArticleItemData> {
+        return newsFeedUseCase.run {
+            withContext(Dispatchers.IO) {
+                return@withContext getStoredArticlesFromDatabase().let { databaseArticles ->
+                    withContext(Dispatchers.Main) {
+                        return@withContext databaseArticles
+                    }
+                }
+            }
         }
     }
+
+
+    private suspend fun getRecommendedTopicsFromNetwork() =
+        suspendCoroutine<List<ArticleItemData>> { suspend ->
+            viewModelScope.launch(Dispatchers.IO) {
+                RECOMMENDED_TOPICS
+                    .map { async { newsFeedUseCase.getTopic(it) } } // fetch in parallel
+                    .awaitAll()
+                    .flatten()
+                    .let { articles -> suspend.resume(articles) }
+            }
+        }
 
     fun updateViewState() {
         viewModelScope.launch { currentViewState.collect() }

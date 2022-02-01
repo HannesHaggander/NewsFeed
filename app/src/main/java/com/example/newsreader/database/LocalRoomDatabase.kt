@@ -13,11 +13,10 @@ abstract class LocalRoomDatabase : RoomDatabase() {
     abstract fun articleItemDao(): ArticleItemDao
 
     companion object {
-        fun create(context: Context) = Room
-            .databaseBuilder(
-                context,
-                LocalRoomDatabase::class.java, "localdb"
-            )
+        private const val DATABASE_NAME = "localdb"
+
+        fun create(context: Context): LocalRoomDatabase = Room
+            .databaseBuilder(context, LocalRoomDatabase::class.java, DATABASE_NAME)
             .build()
     }
 }
