@@ -54,6 +54,7 @@ class NewsFeedFragment : Fragment() {
                 is NewsFeedViewState.Loading -> Loading(loadingText = stringResource(id = R.string.news_feed_loading_message))
                 is NewsFeedViewState.Success -> PresentArticles(
                     articles = state.result,
+                    isOffline = state.isOffline,
                     onArticleClick = { article ->
                         val args = bundleOf().apply {
                             putParcelable(
@@ -62,7 +63,8 @@ class NewsFeedFragment : Fragment() {
                             )
                         }
                         findNavController().navigate(R.id.toDetailedNewsFragment, args = args)
-                    }
+                    },
+                    onRetryConnection = { newsFeedViewModel.updateCurrentViewState() }
                 )
             }
         }

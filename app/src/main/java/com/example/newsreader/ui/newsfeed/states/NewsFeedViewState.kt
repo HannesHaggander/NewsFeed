@@ -9,7 +9,10 @@ sealed class NewsFeedViewState {
         @StringRes val loadingMessageRes: Int = R.string.news_feed_loading_message
     ) : NewsFeedViewState()
 
-    data class Success(val result: List<ArticleItemData>) : NewsFeedViewState()
+    data class Success(
+        val result: List<ArticleItemData>,
+        val isOffline: Boolean
+    ) : NewsFeedViewState()
 
     data class Error(val throwable: Throwable) : NewsFeedViewState()
 }

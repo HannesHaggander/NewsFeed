@@ -15,41 +15,51 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.newsreader.newsfeed.data.ArticleItemData
 import com.example.newsreader.ui.newsfeed.NewsItemView
+import com.example.newsreader.ui.newsfeed.OfflineModeIndicator
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PresentArticles(
     articles: List<ArticleItemData>,
+    isOffline: Boolean,
     onArticleClick: (ArticleItemData) -> Unit,
+    onRetryConnection: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(
-                state = scrollState,
-                enabled = true,
-            )
-            .background(MaterialTheme.colors.background),
-    ) {
-        articles.forEachIndexed { index, item ->
-            AnimatedVisibility(
-                visible = true,
-                enter = fadeIn(
-                    initialAlpha = 0f,
-                    animationSpec = tween(
-                        durationMillis = 1000,
-                        delayMillis = index * 500,
-                        easing = LinearEasing
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (isOffline) {
+            OfflineModeIndicator(onRetryConnection = onRetryConnection)
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(
+                    state = scrollState,
+                    enabled = true,
+                )
+                .background(MaterialTheme.colors.background),
+        ) {
+            articles.forEachIndexed { index, item ->
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(
+                        initialAlpha = 0f,
+                        animationSpec = tween(
+                            durationMillis = 1000,
+                            delayMillis = index * 500,
+                            easing = LinearEasing
+                        )
                     )
-                )
-            ) {
-                NewsItemView(
-                    articleItemData = item,
-                    onItemClick = { onArticleClick.invoke(item) }
-                )
+                ) {
+                    NewsItemView(
+                        articleItemData = item,
+                        onItemClick = { onArticleClick.invoke(item) }
+                    )
+                }
             }
         }
     }
+
 }

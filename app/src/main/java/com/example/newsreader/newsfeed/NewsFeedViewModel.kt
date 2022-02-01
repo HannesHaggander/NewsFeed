@@ -31,7 +31,10 @@ class NewsFeedViewModel @Inject constructor(
             _currentStateFlow.safeEmit(NewsFeedViewState.Loading())
             getRecommendedTopicsFromNetwork()
                 .onEmpty { tryOfflineMode() }
-                .onPopulated { values -> _currentStateFlow.safeEmit(NewsFeedViewState.Success(values)) }
+                .onPopulated { values ->
+                    val successState = NewsFeedViewState.Success(values, isOffline = false)
+                    _currentStateFlow.safeEmit(successState)
+                }
         }
     }
 
@@ -42,7 +45,7 @@ class NewsFeedViewModel @Inject constructor(
                 _currentStateFlow.safeEmit(errorState)
             }
             .onPopulated { values ->
-                _currentStateFlow.safeEmit(NewsFeedViewState.Success(values))
+                _currentStateFlow.safeEmit(NewsFeedViewState.Success(values, isOffline = true))
             }
     }
 

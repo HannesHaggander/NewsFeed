@@ -8,5 +8,7 @@
     <string name="content_description_image">Image of %s</string>
     <string name="article_published_at_date">Published: %s</string>
     <string name="navigation_back">Go back button</string>
+    <string name="offline_mode_active">Offline mode</string>
+    <string name="offline_mode_active_action">Click to retry connection</string>
 
 </resources>
