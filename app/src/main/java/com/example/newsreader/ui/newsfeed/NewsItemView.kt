@@ -42,8 +42,8 @@ fun NewsItemView(
             .wrapContentHeight()
             .heightIn(0.dp, 150.dp)
             .fillMaxWidth()
-            .padding(4.dp)
-            .background(MaterialTheme.colors.surface),
+            .background(MaterialTheme.colors.background)
+            .padding(4.dp),
         onClick = onItemClick,
         elevation = 4.dp,
     ) {
@@ -51,6 +51,7 @@ fun NewsItemView(
             modifier = modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
+                .background(MaterialTheme.colors.surface)
         ) {
             val (textContainer, image) = createRefs()
 

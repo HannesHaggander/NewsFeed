@@ -30,17 +30,20 @@ class NewsFeedViewModel @Inject constructor(
         viewModelScope.launch {
             _currentStateFlow.safeEmit(NewsFeedViewState.Loading())
             getRecommendedTopicsFromNetwork()
-                .onEmpty {
-                    attemptToFetchStoredArticles()
-                        .onEmpty {
-                            _currentStateFlow.safeEmit(NewsFeedViewState.Error(Throwable("Failed to find articles")))
-                        }
-                        .onPopulated { values ->
-                            _currentStateFlow.safeEmit(NewsFeedViewState.Success(values))
-                        }
-                }
+                .onEmpty { tryOfflineMode() }
                 .onPopulated { values -> _currentStateFlow.safeEmit(NewsFeedViewState.Success(values)) }
         }
+    }
+
+    private suspend fun tryOfflineMode() {
+        attemptToFetchStoredArticles()
+            .onEmpty {
+                val errorState = NewsFeedViewState.Error(Throwable("Failed to find articles"))
+                _currentStateFlow.safeEmit(errorState)
+            }
+            .onPopulated { values ->
+                _currentStateFlow.safeEmit(NewsFeedViewState.Success(values))
+            }
     }
 
     /**
