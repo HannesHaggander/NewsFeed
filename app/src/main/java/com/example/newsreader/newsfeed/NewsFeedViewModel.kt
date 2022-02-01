@@ -9,10 +9,8 @@ import com.example.newsreader.newsfeed.data.ArticleItemData
 import com.example.newsreader.ui.newsfeed.states.NewsFeedViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -23,19 +21,33 @@ class NewsFeedViewModel @Inject constructor(
     private val newsFeedUseCase: NewsFeedUseCase
 ) : ViewModel() {
 
-    val currentViewState = flow {
-        safeEmit(NewsFeedViewState.Loading())
-        getRecommendedTopicsFromNetwork()
-            .onEmpty {
-                attemptToFetchStoredArticles()
-                    .onEmpty { safeEmit(NewsFeedViewState.Error(Throwable("Failed to find articles"))) }
-                    .onPopulated { values -> safeEmit(NewsFeedViewState.Success(values)) }
-            }
-            .onPopulated { values -> safeEmit(NewsFeedViewState.Success(values)) }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, NewsFeedViewState.Loading())
+    private val _currentStateFlow =
+        MutableStateFlow<NewsFeedViewState>(value = NewsFeedViewState.Loading())
+    val currentStateFlow: StateFlow<NewsFeedViewState>
+        get() = _currentStateFlow
 
-    private suspend fun attemptToFetchStoredArticles(): List<ArticleItemData> {
-        return newsFeedUseCase.run {
+    fun updateCurrentViewState() {
+        viewModelScope.launch {
+            _currentStateFlow.safeEmit(NewsFeedViewState.Loading())
+            getRecommendedTopicsFromNetwork()
+                .onEmpty {
+                    attemptToFetchStoredArticles()
+                        .onEmpty {
+                            _currentStateFlow.safeEmit(NewsFeedViewState.Error(Throwable("Failed to find articles")))
+                        }
+                        .onPopulated { values ->
+                            _currentStateFlow.safeEmit(NewsFeedViewState.Success(values))
+                        }
+                }
+                .onPopulated { values -> _currentStateFlow.safeEmit(NewsFeedViewState.Success(values)) }
+        }
+    }
+
+    /**
+     * Context swapping function for retrieving database values as not to violate flow rules
+     */
+    private suspend fun attemptToFetchStoredArticles(): List<ArticleItemData> =
+        newsFeedUseCase.run {
             withContext(Dispatchers.IO) {
                 return@withContext getStoredArticlesFromDatabase().let { databaseArticles ->
                     withContext(Dispatchers.Main) {
@@ -44,8 +56,6 @@ class NewsFeedViewModel @Inject constructor(
                 }
             }
         }
-    }
-
 
     private suspend fun getRecommendedTopicsFromNetwork() =
         suspendCoroutine<List<ArticleItemData>> { suspend ->
@@ -58,9 +68,6 @@ class NewsFeedViewModel @Inject constructor(
             }
         }
 
-    fun updateViewState() {
-        viewModelScope.launch { currentViewState.collect() }
-    }
 
     companion object {
         val RECOMMENDED_TOPICS = listOf(

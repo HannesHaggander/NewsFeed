@@ -1,6 +1,5 @@
 package com.example.newsreader.newsfeed
 
-import android.util.Log
 import com.example.newsreader.database.LocalRoomDatabase
 import com.example.newsreader.network.NewsApiContract
 import com.example.newsreader.newsfeed.data.ArticleItemData
@@ -21,7 +20,6 @@ class NewsFeedUseCase @Inject constructor(
     suspend fun getStoredArticlesFromDatabase(): List<ArticleItemData> = newsApiContract
         .queryDatabaseForRecentArticles()
         .getOrNull()
-        .also { Log.d("Hannes", "Fetching data from database") }
         .orEmpty()
 
     private suspend fun setDatabase(articles: List<ArticleItemData>, db: LocalRoomDatabase) {

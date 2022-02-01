@@ -36,24 +36,7 @@ class NewsApiProvider @Inject constructor(
                         response: Response<EverythingQueryResult>
                     ) {
                         if (response.isSuccessful) {
-                            response
-                                .body()
-                                ?.articles
-                                ?.mapNotNull { article ->
-                                    runCatching { article.toDomainModel() }
-                                        .onFailure { error ->
-                                            Log.w(
-                                                NewsApiProvider::class.java.simpleName,
-                                                "Failed to parse news data to domain model",
-                                                error
-                                            )
-                                        }
-                                        .getOrNull()
-                                }
-                                ?.let { domainArticles ->
-                                    suspended.resume(Result.success(domainArticles))
-                                }
-                                ?: suspended.resume("Failed to parse response data".toResultFailure())
+                            suspended.resume(onSuccessfulResponse(response))
                         } else {
                             suspended.resume("Response was unsuccessful".toResultFailure())
                         }
@@ -66,6 +49,21 @@ class NewsApiProvider @Inject constructor(
                 })
         }
 
+    private fun onSuccessfulResponse(response: Response<EverythingQueryResult>): Result<List<ArticleItemData>> {
+        response
+            .body()
+            ?.articles
+            ?.mapNotNull { article ->
+                runCatching { article.toDomainModel() }
+                    .onFailure { error ->
+                        Log.w(TAG, "Failed to parse news data to domain model", error)
+                    }
+                    .getOrNull()
+            }
+            ?.let { domainArticles -> return Result.success(domainArticles) }
+            ?: return Result.failure(Throwable("Failed to find articles in response"))
+    }
+
     override suspend fun queryDatabaseForRecentArticles(): Result<List<ArticleItemData>> =
         localRoomDatabase
             .articleItemDao()
@@ -76,4 +74,9 @@ class NewsApiProvider @Inject constructor(
             ?: Result.failure(Throwable("Failed to query database"))
 
     private fun <T> String.toResultFailure() = Result.failure<T>(Throwable(this))
+
+    companion object {
+        private val TAG = NewsApiProvider::class.java.simpleName
+    }
+
 }
