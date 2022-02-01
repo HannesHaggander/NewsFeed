@@ -2,7 +2,8 @@
     <string name="app_name">NewsReader</string>
     <string name="news_feed_loading_message">Loading news…</string>
     <string name="news_feed_loading_error_title">An error occurred!</string>
-    <string name="news_feed_loading_error_description">Finding news from the internet failed.</string>
+    <string name="news_feed_loading_error_description">Failed to find any news.</string>
     <string name="news_feed_loading_error_action">Retry</string>
 
+    <string name="content_description_image">Image of %s</string>
 </resources>

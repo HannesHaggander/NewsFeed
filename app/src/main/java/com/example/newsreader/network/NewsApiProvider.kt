@@ -1,5 +1,6 @@
 package com.example.newsreader.network
 
+import android.util.Log
 import com.example.newsreader.network.data.EverythingQueryResult
 import com.example.newsreader.network.requests.NewsQuery
 import com.example.newsreader.newsfeed.data.ArticleItemData
@@ -20,7 +21,6 @@ class NewsApiProvider @Inject constructor(
 
     override suspend fun queryRequest(query: String): Result<List<ArticleItemData>> =
         suspendCoroutine { suspended ->
-
             if (query.isBlank()) {
                 suspended.resume("Category can not be blank".toResultFailure())
                 return@suspendCoroutine
@@ -37,7 +37,17 @@ class NewsApiProvider @Inject constructor(
                             response
                                 .body()
                                 ?.articles
-                                ?.map { article -> article.toDomainModel() }
+                                ?.mapNotNull { article ->
+                                    runCatching { article.toDomainModel() }
+                                        .onFailure { error ->
+                                            Log.w(
+                                                NewsApiProvider::class.java.simpleName,
+                                                "Failed to parse news data to domain model",
+                                                error
+                                            )
+                                        }
+                                        .getOrNull()
+                                }
                                 ?.let { domainArticles ->
                                     suspended.resume(Result.success(domainArticles))
                                 }

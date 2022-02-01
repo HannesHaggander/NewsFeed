@@ -1,5 +1,6 @@
 package com.example.newsreader.ui
 
+import androidx.cardview.widget.CardView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -16,7 +17,9 @@ import com.example.newsreader.R
 
 @Composable
 fun Loading(
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background),
     loadingText: String
 ) {
     val lottieComposition = rememberLottieComposition(
@@ -30,7 +33,7 @@ fun Loading(
 
     Column(
         modifier = modifier
-            .background(MaterialTheme.colors.surface),
+            .background(MaterialTheme.colors.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -50,7 +53,7 @@ fun Loading(
             text = loadingText,
             textAlign = TextAlign.Center,
             style = AppStyle.title,
-            color = MaterialTheme.colors.onSurface
+            color = MaterialTheme.colors.onBackground
         )
     }
 }

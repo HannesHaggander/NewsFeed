@@ -14,46 +14,61 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ErrorView(
-    modifier: Modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
+    modifier: Modifier = Modifier,
     title: String,
     description: String,
     actionText: String,
     action: (() -> Unit)?,
 ) {
-    Column(
-        modifier = modifier
-            .background(MaterialTheme.colors.surface),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
     ) {
-        Text(
-            text = title,
-            style = AppStyle.title,
-            color = MaterialTheme.colors.error,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
+        Column(
+            modifier = modifier
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = title,
+                style = AppStyle.title,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .padding(vertical = 8.dp)
+            )
 
-        Text(text = description, style = AppStyle.body, color = MaterialTheme.colors.onSurface)
-        action?.let { click ->
-            Button(
-                onClick = click,
-                modifier = modifier
-                    .padding(8.dp)
-                    .wrapContentWidth()
-                    .wrapContentHeight(),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.secondary,
-                    contentColor = MaterialTheme.colors.onSecondary,
-                    disabledBackgroundColor = MaterialTheme.colors.background,
-                    disabledContentColor = MaterialTheme.colors.onBackground
-                )
-            ) {
-                Text(
-                    text = actionText,
-                    style = AppStyle.utility,
-                    color = MaterialTheme.colors.onSurface
-                )
+            Text(
+                text = description,
+                style = AppStyle.body,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier.wrapContentHeight()
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            action?.let { click ->
+                Button(
+                    onClick = click,
+                    modifier = modifier
+                        .padding(8.dp)
+                        .wrapContentWidth()
+                        .wrapContentHeight(),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSecondary,
+                        disabledBackgroundColor = MaterialTheme.colors.background,
+                        disabledContentColor = MaterialTheme.colors.onBackground
+                    )
+                ) {
+                    Text(
+                        text = actionText,
+                        style = AppStyle.utility,
+                        color = MaterialTheme.colors.onSurface
+                    )
+                }
             }
         }
     }

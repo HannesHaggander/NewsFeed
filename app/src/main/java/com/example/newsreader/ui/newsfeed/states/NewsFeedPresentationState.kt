@@ -13,17 +13,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import com.example.newsreader.helpers.VIEW_ROUTE_DETAILED_NEWS
 import com.example.newsreader.newsfeed.data.ArticleItemData
-import com.example.newsreader.ui.detailednewsview.DetailedNewsViewExtras
 import com.example.newsreader.ui.newsfeed.NewsItemView
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PresentArticles(
     articles: List<ArticleItemData>,
-    navController: NavController
+    onArticleClick: (ArticleItemData) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -50,12 +47,7 @@ fun PresentArticles(
             ) {
                 NewsItemView(
                     articleItemData = item,
-                    onItemClick = {
-                        navController.navigate(
-                            route = VIEW_ROUTE_DETAILED_NEWS,
-                            navigatorExtras = DetailedNewsViewExtras(item)
-                        )
-                    }
+                    onItemClick = { onArticleClick.invoke(item) }
                 )
             }
         }

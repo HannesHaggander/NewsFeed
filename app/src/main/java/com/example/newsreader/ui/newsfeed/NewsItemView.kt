@@ -1,5 +1,6 @@
 package com.example.newsreader.ui.newsfeed
 
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,24 +25,31 @@ import com.example.newsreader.newsfeed.data.ArticleItemData
 import com.example.newsreader.ui.AppStyle
 import com.example.newsreader.ui.AppTheme
 import java.time.OffsetDateTime
+import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NewsItemView(
     modifier: Modifier = Modifier
-        .height(160.dp)
-        .padding(8.dp),
+        .wrapContentHeight()
+        .heightIn(0.dp, 150.dp)
+        .fillMaxWidth()
+        .padding(4.dp),
     articleItemData: ArticleItemData,
     onItemClick: () -> Unit = {}
 ) {
+    val hasImage = articleItemData.urlToImage.isNotEmpty()
+
     Card(
-        modifier = modifier
-            .background(MaterialTheme.colors.surface)
-            .wrapContentHeight(),
+        modifier = modifier.background(MaterialTheme.colors.surface),
         onClick = onItemClick,
         elevation = 4.dp,
     ) {
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(
+            modifier = modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+        ) {
             val (textContainer, image) = createRefs()
 
             Column(modifier = modifier
@@ -49,7 +58,7 @@ fun NewsItemView(
                     start.linkTo(parent.start)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                    width = Dimension.percent(0.66f)
+                    width = Dimension.percent(if (hasImage) 0.66f else 1f)
                 }
             ) {
                 Text(
@@ -79,28 +88,40 @@ fun NewsItemView(
                 }
             }
 
-            Image(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .constrainAs(image) {
-                        end.linkTo(parent.end)
-                        top.linkTo(textContainer.top)
-                        bottom.linkTo(textContainer.bottom)
-                        start.linkTo(textContainer.end)
-                        width = Dimension.fillToConstraints
-                    },
-                painter = rememberImagePainter(
-                    data = articleItemData.urlToImage,
-                    builder = {
-                        ImageRequest
-                            .Builder(context = LocalContext.current)
-                            .crossfade(true)
-                            .fallback(drawableResId = R.drawable.ic_image_broken)
-                            .build()
-                    }
-                ),
-                contentDescription = "image for ${articleItemData.title}",
-            )
+            if (hasImage) {
+                Image(
+                    modifier = modifier
+                        .padding(8.dp)
+                        .constrainAs(image) {
+                            end.linkTo(parent.end)
+                            top.linkTo(textContainer.top)
+                            bottom.linkTo(textContainer.bottom)
+                            start.linkTo(textContainer.end)
+                            width = Dimension.fillToConstraints
+                        },
+                    painter = rememberImagePainter(
+                        data = articleItemData.urlToImage,
+                        builder = {
+                            ImageRequest
+                                .Builder(context = LocalContext.current)
+                                .crossfade(true)
+                                .placeholder(
+                                    AppCompatResources.getDrawable(
+                                        LocalContext.current,
+                                        R.drawable.ic_image_broken
+                                    )
+                                )
+                                .error(drawableResId = R.drawable.ic_image_broken)
+                                .fallback(drawableResId = R.drawable.ic_image_broken)
+                                .build()
+                        }
+                    ),
+                    contentDescription = stringResource(
+                        id = R.string.content_description_image,
+                        articleItemData.title
+                    ),
+                )
+            }
         }
     }
 }
@@ -111,22 +132,24 @@ fun NewsItemPreview() {
     AppTheme {
         NewsItemView(
             articleItemData = ArticleItemData(
+                id = UUID.randomUUID(),
                 url = "url",
                 title = "title",
                 description = "description",
                 publishedAt = OffsetDateTime.now(),
-                urlToImage = "url to image",
+                urlToImage = "",
             )
         )
     }
 }
 
 @Composable
-@Preview(name = "Long title ")
+@Preview(name = "Filled title and description")
 fun NewsItemLongTitle() {
     AppTheme {
         NewsItemView(
             articleItemData = ArticleItemData(
+                id = UUID.randomUUID(),
                 url = "url",
                 title = "This is a far too long title and we will have to cut it",
                 description = "This description is also very long but it will write over several lines just to showcase that it works fine even though it cuts off",
@@ -134,5 +157,45 @@ fun NewsItemLongTitle() {
                 urlToImage = "url to image",
             )
         )
+    }
+}
+
+@Preview(name = "Items in column list")
+@Composable
+fun NewsItemList() {
+    AppTheme {
+        Column {
+            NewsItemView(
+                articleItemData = ArticleItemData(
+                    id = UUID.randomUUID(),
+                    url = "url",
+                    title = "Title 1",
+                    description = "Description for title 1",
+                    publishedAt = OffsetDateTime.now(),
+                    urlToImage = "",
+                )
+            )
+            NewsItemView(
+                articleItemData = ArticleItemData(
+                    id = UUID.randomUUID(),
+                    url = "url",
+                    title = "Title 2",
+                    description = "description for title 2",
+                    publishedAt = OffsetDateTime.now(),
+                    urlToImage = "url to image",
+                )
+            )
+            NewsItemView(
+                articleItemData = ArticleItemData(
+                    id = UUID.randomUUID(),
+                    url = "url",
+                    title = "Title 3",
+                    description = "description for title 3",
+                    publishedAt = OffsetDateTime.now(),
+                    urlToImage = "url to image",
+                )
+            )
+        }
+
     }
 }

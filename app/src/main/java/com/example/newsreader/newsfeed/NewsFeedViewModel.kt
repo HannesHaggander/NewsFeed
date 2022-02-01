@@ -1,5 +1,6 @@
 package com.example.newsreader.newsfeed
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsreader.newsfeed.data.ArticleItemData
@@ -7,7 +8,7 @@ import com.example.newsreader.ui.newsfeed.states.NewsFeedViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -20,7 +21,8 @@ class NewsFeedViewModel @Inject constructor(
     private val newsFeedUseCase: NewsFeedUseCase
 ) : ViewModel() {
 
-    val currentState = flow {
+    val currentViewState = flow {
+        Log.d("hannes", "Updating current view state")
         emit(NewsFeedViewState.Loading())
         getTopics().let { articles ->
             if (articles.isEmpty()) {
@@ -42,9 +44,7 @@ class NewsFeedViewModel @Inject constructor(
     }
 
     fun updateViewState() {
-        viewModelScope.launch {
-            currentState.collectLatest { /* Collect data */ }
-        }
+        viewModelScope.launch { currentViewState.collect() }
     }
 
     companion object {

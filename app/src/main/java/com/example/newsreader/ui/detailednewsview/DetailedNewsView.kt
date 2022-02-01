@@ -10,7 +10,5 @@ fun DetailedNewsView(
     navController: NavController,
     articleItemData: ArticleItemData
 ) {
-    Text(text = "Detailed news view")
+    Text(text = "Detailed news view for article: ${articleItemData.title}")
 }
-
-

@@ -8,6 +8,11 @@ import retrofit2.http.Query
 interface NewsQuery {
 
     @GET("everything")
-    fun query(@Query("q") q: String): Call<EverythingQueryResult>
+    fun query(
+        @Query("q") q: String,
+        @Query("sortBy") sortBy: String = SortNewsBy.PUBLISHED_AT.value,
+        @Query("language") language: String = NewsLanguage.ENGLISH.code,
+        @Query("page") page: Int = 1
+    ): Call<EverythingQueryResult>
 
 }
