@@ -10,5 +10,8 @@ class NewsFeedUseCase @Inject constructor(
     suspend fun getTopic(topic: String): List<ArticleItemData> = newsApiContract
         .queryRequest(topic)
         .getOrNull()
-        .orEmpty()
+        ?: newsApiContract
+            .queryDatabase()
+            .getOrNull()
+            .orEmpty()
 }

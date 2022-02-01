@@ -2,6 +2,7 @@ package com.example.newsreader.dependencyinjection
 
 import android.content.Context
 import com.example.newsreader.R
+import com.example.newsreader.database.LocalRoomDatabase
 import com.example.newsreader.network.NewsApiContract
 import com.example.newsreader.network.NewsApiProvider
 import com.example.newsreader.newsfeed.NewsFeedUseCase
@@ -23,8 +24,10 @@ class ProviderModule {
 
     @Provides
     @Singleton
-    fun provideNewsApiContract(retrofit: Retrofit): NewsApiContract =
-        NewsApiProvider(retrofit)
+    fun provideNewsApiContract(
+        retrofit: Retrofit,
+        localRoomDatabase: LocalRoomDatabase
+    ): NewsApiContract = NewsApiProvider(retrofit, localRoomDatabase)
 
     @Provides
     fun provideNewsFeedUseCase(newsApiProvider: NewsApiProvider): NewsFeedUseCase =
@@ -67,5 +70,10 @@ class ProviderModule {
             chain.proceed(updatedRequest)
         }
         .build()
+
+    @Provides
+    @Singleton
+    fun provideLocalRoomDatabase(@ApplicationContext appContext: Context) =
+        LocalRoomDatabase.create(appContext)
 
 }
