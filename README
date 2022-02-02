@@ -1,8 +1,8 @@
-#Cant compile, missing a R.string.news_api_key
+# Cant compile, missing a R.string.news_api_key
 As the api key is private it is not included in the project files.
 To resolve this add 'news_api_key' to your strings resource file with the api key as the value.
 
 E.g.: <string name="news_api_key">INSERT_API_KEY_HERE</string>
 
-#Note
+# Note
 Please keep in mind that during the course of this project there was a lot of time required to do configuration as opposed to actual development.
