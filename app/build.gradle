@@ -19,12 +19,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    sourceSets {
-        androidTest {
-            java.srcDirs = ['src/androidTest/java']
-        }
-    }
-
     testOptions {
         packagingOptions {
             jniLibs {
@@ -108,12 +102,12 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     // mockk - mocking framework
-    def mockk_version = '1.12.2'
+    // New version 1.12.2 does not properly provide jvm agent, sticking to 1.11.0 for now
+    def mockk_version = '1.11.0'
     testImplementation "io.mockk:mockk:$mockk_version"
-
-    // New version of mockk does not properly provide jvm agent, sticking to 1.11.0 for now
-    androidTestImplementation "io.mockk:mockk-android:1.11.0"
-    androidTestImplementation "io.mockk:mockk-agent-jvm:1.11.0"
+    testImplementation "io.mockk:mockk-agent-jvm:$mockk_version"
+    androidTestImplementation "io.mockk:mockk-android:$mockk_version"
+    androidTestImplementation "io.mockk:mockk-agent-jvm:$mockk_version"
 
     // junit - unit testing
     testImplementation 'junit:junit:4.13.2'
